@@ -1,0 +1,19 @@
+# This repository is deliberately a code-and-structure-only release.
+#
+# Every excluded directory includes an explicitly force-added .gitkeep file so
+# the expected directory structure remains available after a fresh clone.
+
+# Transient upload metadata
+/.cache/
+
+# Downloaded model weights and evaluation data
+/checkpoints/**
+/evaluation_dataset/**
+
+# Archived model predictions
+/inference_results/**/*.npy
+
+# Reference artifacts and files generated during evaluation
+/evaluation/reference_results/**
+/evaluation/outputs/**
+/evaluation/metric_results/**

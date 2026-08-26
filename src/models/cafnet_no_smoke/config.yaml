@@ -1,0 +1,22 @@
+# Artifact evaluation uses only the packaged Smoke-Eval dataset.
+test_base_dir: ../../../evaluation_dataset/Smoke-Eval
+test_split: train
+test_split_json: null
+input_height: 288
+input_width: 512
+radar_max_depth_m: 11.2
+max_dist_correspondence: 0.5
+patch_size: [64, 128]
+encoder: resnet34_bts
+encoder_radar: resnet18
+radar_input_channels: 1
+bts_size: 512
+max_depth: 11.2
+batch_size: 8
+num_workers: 0
+seed: 42
+cpu: false
+# CaFNet overflows on this GPU under fp16; use the released fp32 weights.
+mixed_precision: "no"
+checkpoint_path: ../../../checkpoints/baselines/cafnet_no_smoke/cafnet_no_smoke.safetensors
+prediction_dir: ../../../inference_results/cafnet_no_smoke

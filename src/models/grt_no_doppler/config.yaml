@@ -1,0 +1,9 @@
+paths:
+  test_data_root: ../../../evaluation_dataset/Smoke-Eval
+training: {batch_size: 1, num_workers: 0, mixed_precision: fp16, seed: 42}
+inference:
+  checkpoint_path: ../../../checkpoints/ablations/grt_no_doppler/grt_no_doppler.safetensors
+  output_dir: ../../../inference_results/grt_no_doppler
+  batch_size: 1
+  num_workers: 0
+  frame_skip: 1

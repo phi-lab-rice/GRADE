@@ -22,8 +22,7 @@ Artifacts_Evaluation/
 └── evaluation/
     ├── run_inference.py       # unified model inference runner
     ├── run_metrics.py         # unified 2D -> 3D -> merged-CSV runner
-    ├── reproduce_paper.py     # quantitative tables/figures and HTML comparison
-    ├── comparison_report.py   # standalone HTML comparison report
+    ├── reproduce_paper.py     # quantitative tables and figures
     ├── outputs/inference/     # newly generated predictions and run manifests
     ├── metric_results/        # metric code and newly generated CSV outputs
     ├── reference_results/     # immutable camera-ready CSVs, tables, figures
@@ -33,16 +32,10 @@ Artifacts_Evaluation/
     └── reproduced_results/    # newly generated tables, figures, comparison HTML
 ```
 
-This GitHub repository intentionally contains only the source code and
-directory skeleton. Downloaded checkpoints and datasets, archived inference
-`.npy` tensors, reference results, and generated outputs and metrics are
-excluded from Git. The committed `.gitkeep` files preserve the complete
-expected directory structure.
-
-When the full artifact payload is present locally, `inference_results/` and
-`evaluation/reference_results/` are the golden sources. The runners never
-overwrite them. New files belong only in `evaluation/outputs/`,
-`evaluation/metric_results/`, and `evaluation/reproduced_results/`.
+`inference_results/` and `evaluation/reference_results/` are the golden
+sources. The runners never overwrite them. New files belong only in
+`evaluation/outputs/`, `evaluation/metric_results/`, and
+`evaluation/reproduced_results/`.
 
 ## Download the data and checkpoints
 
@@ -131,21 +124,21 @@ python evaluation/run_metrics.py --radar-robustness
 
 ## Reproduce paper tables and figures
 
-After generating the required merged CSVs, run:
+After generating the required local merged CSVs, run:
 
 ```bash
-python evaluation/reproduce_paper.py
+python evaluation/reproduce_paper.py --mode local
 ```
 
-This reproduces Tables 2--7 and quantitative Figures 9 and 11--14. Figure 10
-is qualitative and intentionally excluded. The script writes outputs to
-`evaluation/reproduced_results/` and creates an HTML page that places each new
-table/figure beside the corresponding golden artifact. To create that report
-separately, run:
+This reads `evaluation/metric_results/merged_csv/` and writes Tables 2--7 and
+quantitative Figures 9 and 11--14 to `evaluation/reproduced_results/local/`.
+Figure 10 is qualitative and intentionally excluded. To regenerate those
+artifacts from the saved reference CSVs instead, run:
 
 ```bash
-python evaluation/comparison_report.py
+python evaluation/reproduce_paper.py --mode saved
 ```
 
-The archived reference CSVs, paper tables, and paper figures remain unchanged
-throughout this workflow.
+Saved mode reads `evaluation/reference_results/pre_eval_results/csv/` and
+writes its generated artifacts to `evaluation/reproduced_results/saved/`.
+Neither mode compares or overwrites golden paper assets.

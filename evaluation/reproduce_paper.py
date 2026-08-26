@@ -27,6 +27,7 @@ METRIC_DIR = EVALUATION_DIR / "metric_results"
 REFERENCE_ROOT = EVALUATION_DIR / "reference_results"
 DEFAULT_OUTPUT_ROOT = EVALUATION_DIR / "reproduced_results"
 DEFAULT_INPUT_MERGED_DIR = METRIC_DIR / "merged_csv"
+DEFAULT_SAVED_INPUT_MERGED_DIR = REFERENCE_ROOT / "pre_eval_results" / "csv"
 
 
 @dataclass(frozen=True)
@@ -55,7 +56,8 @@ def prepare_reproduction(
 
     The selected merged CSV directory is the only source for newly reproduced
     quantitative results. ``reference_root`` supplies immutable support data
-    and the side-by-side comparison assets; it is never an output destination.
+    such as radar-robustness and sampling-step inputs; it is never an output
+    destination.
     """
 
     context = ReproductionContext(
@@ -262,14 +264,6 @@ def normalize_reproduced_paper_figures(context: ReproductionContext) -> None:
         shutil.copy2(source, destination)
 
 
-def write_comparison_report(context: ReproductionContext) -> None:
-    """Write one HTML page showing golden and newly reproduced artifacts side by side."""
-    _invoke(
-        "comparison_report",
-        ["--reference-root", str(context.reference_root), "--reproduced-root", str(context.output_root)],
-    )
-
-
 def compare_paper_figure_assets(
     context: ReproductionContext, paper_figure_root: Path
 ) -> dict[str, int]:
@@ -348,11 +342,24 @@ def refresh_merged_csvs(context: ReproductionContext) -> None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    mode = parser.add_mutually_exclusive_group()
-    mode.add_argument("--tables-only", action="store_true")
-    mode.add_argument("--figures-only", action="store_true")
-    parser.add_argument("--output-root", type=Path, default=DEFAULT_OUTPUT_ROOT)
-    parser.add_argument("--input-merged-dir", type=Path, default=DEFAULT_INPUT_MERGED_DIR)
+    parser.add_argument(
+        "--mode", choices=("local", "saved"), required=True,
+        help=(
+            "local reads newly computed metric_results/merged_csv; saved reads "
+            "reference_results/pre_eval_results/csv."
+        ),
+    )
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument("--tables-only", action="store_true")
+    selection.add_argument("--figures-only", action="store_true")
+    parser.add_argument(
+        "--output-root", type=Path, default=None,
+        help="Override the mode-specific output directory under reproduced_results/.",
+    )
+    parser.add_argument(
+        "--input-merged-dir", type=Path, default=None,
+        help="Override the mode-specific input merged-CSV directory.",
+    )
     parser.add_argument("--reference-root", type=Path, default=REFERENCE_ROOT)
     parser.add_argument("--refresh-merged", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
@@ -361,13 +368,24 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    context = prepare_reproduction(args.input_merged_dir, args.reference_root, args.output_root)
+    default_input = (
+        DEFAULT_INPUT_MERGED_DIR
+        if args.mode == "local"
+        else DEFAULT_SAVED_INPUT_MERGED_DIR
+    )
+    default_output = DEFAULT_OUTPUT_ROOT / args.mode
+    input_merged_dir = args.input_merged_dir or default_input
+    output_root = args.output_root or default_output
+    if args.refresh_merged and args.mode != "local":
+        raise ValueError("--refresh-merged is supported only with --mode local.")
+    context = prepare_reproduction(input_merged_dir, args.reference_root, output_root)
     include_tables = not args.figures_only
     include_figures = not args.tables_only
     if args.dry_run:
-        print(f"Would read fresh CSVs from: {context.input_merged_dir}")
-        print(f"Would read golden support data from: {context.reference_root}")
-        print(f"Would write reproduced artifacts to: {context.output_root}")
+        print(f"Mode: {args.mode}")
+        print(f"Would read merged CSVs from: {context.input_merged_dir}")
+        print(f"Would read fixed support data from: {context.reference_root}")
+        print(f"Would write generated artifacts to: {context.output_root}")
         print("Would run Tables 2-7 and Figures 9, 11-14; Figure 10 remains qualitative-only.")
         return
     if not context.reference_root.is_dir():
@@ -378,8 +396,9 @@ def main() -> None:
         refresh_merged_csvs(context)
     if not context.input_merged_dir.is_dir():
         raise FileNotFoundError(
-            f"Fresh merged CSVs not found: {context.input_merged_dir}. Run evaluation/run_metrics.py "
-            "for each required model, or pass --refresh-merged after raw metric CSVs exist."
+            f"Merged CSVs not found for --mode {args.mode}: {context.input_merged_dir}. "
+            "For local mode, run evaluation/run_metrics.py for each required model or pass "
+            "--refresh-merged after raw metric CSVs exist."
         )
     if include_tables:
         for producer in (table2, table3, table4, table5, table6, table7):
@@ -391,10 +410,9 @@ def main() -> None:
         ):
             producer(context)
         normalize_reproduced_paper_figures(context)
-    write_comparison_report(context)
     print("\nReproduction complete. Figure 10 is intentionally excluded (qualitative-only).")
+    print(f"Mode: {args.mode}")
     print(f"Reproduced outputs: {context.output_root}")
-    print(f"Side-by-side report: {context.output_root / 'comparison.html'}")
 
 
 
@@ -4382,130 +4400,6 @@ def _build_robustness_long_range_module() -> dict[str, Any]:
     return locals()
 
 
-# ---- Embedded former module: comparison_report ----
-def _build_comparison_report_module() -> dict[str, Any]:
-    #!/usr/bin/env python3
-    """Build a side-by-side HTML comparison of reproduced and golden artifacts."""
-
-
-    import argparse
-    import html
-    import os
-    from pathlib import Path
-    from urllib.parse import quote
-
-
-    def parse_args() -> argparse.Namespace:
-        parser = argparse.ArgumentParser(description=__doc__)
-        parser.add_argument("--reference-root", type=Path, required=True)
-        parser.add_argument("--reproduced-root", type=Path, required=True)
-        parser.add_argument("--output", type=Path, default=None)
-        return parser.parse_args()
-
-
-    def files_below(root: Path, suffixes: set[str]) -> set[Path]:
-        if not root.is_dir():
-            return set()
-        return {
-            path.relative_to(root)
-            for path in root.rglob("*")
-            if path.is_file() and path.suffix.lower() in suffixes
-        }
-
-
-    def href(path: Path) -> str:
-        return quote(path.as_posix(), safe="/._-")
-
-
-    def table_card(title: str, reference: Path, reproduced: Path) -> str:
-        def text_or_missing(path: Path) -> str:
-            if not path.is_file():
-                return "<p class=\"missing\">Missing</p>"
-            return f"<pre>{html.escape(path.read_text(encoding='utf-8', errors='replace'))}</pre>"
-
-        return "\n".join(
-            [
-                "<section class=\"comparison\">",
-                f"<h3>{html.escape(title)}</h3>",
-                "<div class=\"pair\">",
-                f"<article><h4>Golden reference</h4>{text_or_missing(reference)}</article>",
-                f"<article><h4>Newly reproduced</h4>{text_or_missing(reproduced)}</article>",
-                "</div></section>",
-            ]
-        )
-
-
-    def figure_card(title: str, reference: Path, reproduced: Path, report_root: Path) -> str:
-        def image_or_missing(path: Path) -> str:
-            if not path.is_file():
-                return "<p class=\"missing\">Missing</p>"
-            try:
-                relative = Path(os.path.relpath(path, report_root))
-                location = href(relative)
-            except ValueError:
-                # A reviewer may place new outputs on a different Windows volume
-                # than the immutable golden assets; relpath cannot cross volumes.
-                location = html.escape(path.as_uri(), quote=True)
-            return f"<a href=\"{location}\"><img src=\"{location}\" alt=\"{html.escape(title)}\"></a>"
-
-        return "\n".join(
-            [
-                "<section class=\"comparison\">",
-                f"<h3>{html.escape(title)}</h3>",
-                "<div class=\"pair\">",
-                f"<article><h4>Golden reference</h4>{image_or_missing(reference)}</article>",
-                f"<article><h4>Newly reproduced</h4>{image_or_missing(reproduced)}</article>",
-                "</div></section>",
-            ]
-        )
-
-
-    def main() -> None:
-        args = parse_args()
-        reference_root = args.reference_root.resolve()
-        reproduced_root = args.reproduced_root.resolve()
-        output = (args.output or reproduced_root / "comparison.html").resolve()
-        output.parent.mkdir(parents=True, exist_ok=True)
-
-        reference_tables = reference_root / "paper_tables"
-        reproduced_tables = reproduced_root / "tables"
-        reference_figures = reference_root / "paper_figures"
-        reproduced_figures = reproduced_root / "paper_figures"
-        table_names = sorted(files_below(reference_tables, {".txt"}) | files_below(reproduced_tables, {".txt"}))
-        figure_names = sorted(
-            files_below(reference_figures, {".png", ".jpg", ".jpeg", ".svg"})
-            & files_below(reproduced_figures, {".png", ".jpg", ".jpeg", ".svg"})
-        )
-
-        table_sections = "\n".join(
-            table_card(name.as_posix(), reference_tables / name, reproduced_tables / name)
-            for name in table_names
-        ) or "<p>No table artifacts were found.</p>"
-        figure_sections = "\n".join(
-            figure_card(name.as_posix(), reference_figures / name, reproduced_figures / name, output.parent)
-            for name in figure_names
-        ) or "<p>No figure artifacts were found.</p>"
-
-        document = f"""<!doctype html>
-    <html lang=\"en\"><head><meta charset=\"utf-8\"><title>GRADE artifact comparison</title>
-    <style>
-    body {{ font-family: system-ui, sans-serif; margin: 2rem; color: #17202a; background: #fbfcfc; }}
-    h1 {{ margin-bottom: .25rem; }} .note {{ color: #566573; }}
-    .comparison {{ margin: 2rem 0; }} .pair {{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }}
-    article {{ background: white; border: 1px solid #d5d8dc; border-radius: .5rem; padding: 1rem; overflow: auto; }}
-    h4 {{ margin-top: 0; }} pre {{ margin: 0; white-space: pre; font-family: ui-monospace, monospace; font-size: .8rem; }}
-    img {{ max-width: 100%; height: auto; display: block; }} .missing {{ color: #b03a2e; font-weight: 600; }}
-    @media (max-width: 900px) {{ .pair {{ grid-template-columns: 1fr; }} }}
-    </style></head><body>
-    <h1>GRADE evaluation: golden vs. reproduced</h1>
-    <p class=\"note\">Golden inputs: {html.escape(str(reference_root))}<br>New outputs: {html.escape(str(reproduced_root))}</p>
-    <h2>Tables</h2>{table_sections}
-    <h2>Figures</h2>{figure_sections}
-    </body></html>"""
-        output.write_text(document, encoding="utf-8")
-        print(f"Saved comparison report: {output}")
-    return locals()
-
 
 _EMBEDDED_BUILDERS: dict[str, Callable[[], dict[str, Any]]] = {
     "table_2": _build_table_2_module,
@@ -4524,7 +4418,6 @@ _EMBEDDED_BUILDERS: dict[str, Callable[[], dict[str, Any]]] = {
     "figure_new_degradation": _build_figure_new_degradation_module,
     "robustness_sparsity": _build_robustness_sparsity_module,
     "robustness_long_range": _build_robustness_long_range_module,
-    "comparison_report": _build_comparison_report_module,
 }
 
 

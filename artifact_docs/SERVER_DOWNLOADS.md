@@ -3,7 +3,7 @@
 Release only the canonical camera-ready artifacts through Box. Do not package
 historical `latest` checkpoints or W&B run directories.  For every download,
 record the source path, byte size, SHA-256, selection metric, and matching
-paper model label in `docs/CHECKPOINT_MANIFEST.md` before publication.
+paper model label in `artifact_docs/CHECKPOINT_MANIFEST.md` before publication.
 
 ## Required data
 

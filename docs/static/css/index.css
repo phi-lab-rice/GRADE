@@ -1,0 +1,281 @@
+/* Project-page styles.
+   Base template: Nerfies (https://nerfies.github.io/), CC BY-SA 4.0.
+   Layout adapted from the RadarSFD project page
+   (https://github.com/phi-lab-rice/RadarSFD/tree/main/docs). */
+
+body {
+  font-family: 'Noto Sans', sans-serif;
+  color: #1f2933;
+  background: #fff;
+}
+
+.site-container {
+  width: auto;
+}
+
+@media screen and (min-width: 1024px) {
+  .site-container { max-width: 960px !important; }
+}
+
+@media screen and (min-width: 1216px) {
+  .site-container { max-width: 1152px !important; }
+}
+
+@media screen and (min-width: 1408px) {
+  .site-container { max-width: 1344px !important; }
+}
+
+.footer .icon-link {
+  font-size: 25px;
+  color: #000;
+}
+
+.link-block a {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.publication-header {
+  padding-bottom: 1rem;
+}
+
+.publication-title {
+  font-family: 'Google Sans', sans-serif;
+}
+
+.publication-authors {
+  font-family: 'Google Sans', sans-serif;
+}
+
+.publication-venue {
+  color: #555;
+  width: fit-content;
+  font-weight: bold;
+}
+
+.publication-authors a {
+  color: hsl(204, 86%, 53%) !important;
+}
+
+.publication-authors a:hover {
+  text-decoration: underline;
+}
+
+.author-block {
+  display: inline-block;
+}
+
+.content {
+  font-size: 18px;
+}
+
+.section-accent {
+  background: #f7f9fb;
+}
+
+.figure-shell {
+  margin: 0;
+}
+
+.figure-caption {
+  margin-top: 0.75rem;
+  color: #616e7c;
+}
+
+/* ---------- teaser ---------- */
+
+.teaser-section {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.teaser-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---------- system overview ---------- */
+
+.method-figure-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.insight-list {
+  margin-left: 1.25rem;
+}
+
+/* ---------- stage-by-stage strip ---------- */
+
+.flow-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.6rem;
+  align-items: start;
+}
+
+.flow-item {
+  text-align: center;
+}
+
+.flow-label {
+  margin-bottom: 0.4rem;
+  color: #1f2933;
+  font-size: 0.88rem;
+  line-height: 1.25;
+}
+
+.flow-item img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid #7b8794;
+  background: #fff;
+}
+
+/* ---------- prototype ---------- */
+
+.prototype-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.prototype-grid img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid #7b8794;
+}
+
+/* ---------- results tables ---------- */
+
+.results-table th,
+.results-table td {
+  vertical-align: middle;
+}
+
+.results-table td.num,
+.results-table th.num {
+  text-align: right;
+}
+
+.group-row td {
+  background: #eef2f7 !important;
+  font-style: italic;
+  color: #52606d;
+}
+
+.highlight-row {
+  background: #eef6ff !important;
+}
+
+.results-note {
+  color: #616e7c;
+}
+
+/* ---------- qualitative grid (9 columns) ---------- */
+
+.qual-figure-wrap {
+  overflow-x: auto;
+}
+
+.qual-grid {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 0;
+  min-width: 1100px;
+  border-top: 1px solid #7b8794;
+  border-left: 1px solid #7b8794;
+}
+
+.qual-panel {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-right: 1px solid #7b8794;
+  border-bottom: 1px solid #7b8794;
+}
+
+/* highlight our column in the qualitative grid */
+.qual-panel.qual-ours {
+  outline: 3px solid #002060;
+  outline-offset: -3px;
+  position: relative;
+  z-index: 1;
+}
+
+.qual-label-row .ours-label {
+  color: #002060;
+  font-weight: 700;
+}
+
+.qual-label-row {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  min-width: 1100px;
+  margin-bottom: 0.35rem;
+  text-align: center;
+  font-family: 'Noto Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* ---------- plot grids ---------- */
+
+.plot-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.plot-grid-4 img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.plot-legend {
+  display: block;
+  max-width: 560px;
+  width: 100%;
+  height: auto;
+  margin: 0 auto 0.6rem auto;
+}
+
+.plot-row-label {
+  margin: 1.1rem 0 0.35rem 0;
+  font-family: 'Google Sans', sans-serif;
+  font-weight: 600;
+  color: #52606d;
+}
+
+.single-plot {
+  display: block;
+  max-width: 640px;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+/* ---------- bibtex ---------- */
+
+.bibtex-block {
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+}
+
+/* ---------- responsive ---------- */
+
+@media screen and (max-width: 1023px) {
+  .flow-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .plot-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media screen and (max-width: 768px) {
+  .flow-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .prototype-grid { grid-template-columns: 1fr; }
+}

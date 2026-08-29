@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="GRADE grounds pretrained generative priors in single-frame mmWave radar geometry to produce dense metric depth under smoke, fog, and darkness.">
+  <meta name="keywords" content="GRADE, mmWave radar, depth estimation, diffusion models, smoke, visual degradation, MobiCom">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GRADE: Single-Frame Generative Radar Depth Estimation Under Visual Degradation</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://phi-lab-rice.github.io/">
+        <span class="icon">
+          <i class="fas fa-home"></i>
+        </span>
+      </a>
+    </div>
+  </div>
+</nav>
+
+
+<section class="hero publication-header">
+  <div class="hero-body">
+    <div class="container site-container">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">GRADE: Single-Frame Generative Radar Depth Estimation Under Visual Degradation</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://github.com/8T15Bin">Bin Zhao</a>,
+            </span>
+            <span class="author-block">Patrick Chiou,</span>
+            <span class="author-block">
+              <a href="https://nakulg.com/">Nakul Garg</a>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Rice University</span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block publication-venue">ACM MobiCom 2026 &middot; Austin, TX</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://github.com/phi-lab-rice/GRADE"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section teaser-section" id="teaser">
+  <div class="container site-container">
+    <figure class="figure-shell">
+      <img class="teaser-image" src="./images/teaser/grade-figure-1.png"
+           alt="Depth predictions in clear, medium smoke, and heavy smoke for GRADE and five baselines, next to the input RGB and the ground-truth depth.">
+    </figure>
+    <div class="content has-text-centered">
+      <p>
+        GRADE produces dense metric depth from a single mmWave radar frame. As smoke thickens, camera-dependent
+        methods lose the scene while GRADE keeps both the metric scale and the structure of the ground truth.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="abstract">
+  <div class="container site-container">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-3 has-text-centered">Abstract</h3>
+        <div class="content has-text-justified">
+          <p>
+            Dense 3D depth perception fails under smoke, fog, and darkness because optical sensors cannot penetrate
+            airborne particulates. mmWave radar operates reliably in these conditions but its limited angular
+            resolution produces depth that is metrically grounded yet structurally incomplete.
+          </p>
+          <p>
+            We present <em>GRADE</em>, a system that grounds pretrained generative priors in single-frame radar
+            geometry for high-fidelity metric depth under visual degradation, without SAR and without a reliable
+            camera. A radar depth module translates raw 4D radar spectra into coarse metric depth; a diffusion
+            refinement module conditions a pretrained latent diffusion backbone on this estimate, recovering
+            structural detail through learned world priors while remaining anchored to the radar's geometry; and a
+            pixel-space visual guidance adapter extracts residual camera cues when available and is trained across
+            clear, smoke-degraded, and occluded inputs so the full output approaches the radar-conditioned path as
+            visibility degrades.
+          </p>
+          <p>
+            Trained and evaluated on approximately 95K synchronized frames across 12 buildings with real smoke using
+            leave-building-out splits, <em>GRADE</em> achieves an MAE of 0.303&thinsp;m in clear conditions and
+            0.313&thinsp;m under smoke, outperforming all baselines across every metric.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section section-accent" id="method">
+  <div class="container site-container">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-3">System Overview</h3>
+      </div>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <figure class="figure-shell">
+          <img class="method-figure-image" src="./images/system/system_overview.png"
+               alt="GRADE architecture: a radar depth module produces coarse metric depth, a diffusion refinement module conditions a pretrained latent diffusion backbone on it, and an RGB visual guidance adapter injects residual pixel-space cues.">
+        </figure>
+      </div>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <div class="content has-text-justified">
+          <p>
+            GRADE is a three-module pipeline that runs in two stages. In Stage&nbsp;1, the <strong>Radar Depth
+            Module</strong> maps a 4D radar spectrum (range, Doppler, azimuth, elevation) to a coarse but metrically
+            accurate depth image with a transformer encoder and a hybrid transformer-CNN decoder, bridging the RF-to-vision
+            domain gap. In Stage&nbsp;2, the <strong>Diffusion Depth Refinement Module</strong> encodes that coarse depth
+            into a condition latent and concatenates it with the noisy latent at every denoising step of a pretrained
+            latent diffusion U-Net, so the generative prior adds structure without drifting off the measured geometry.
+            Running in parallel, the <strong>RGB Visual Guidance Module</strong> extracts residual spatial cues from the
+            camera through a ControlNet-style adapter and injects them via zero-initialized skip connections.
+          </p>
+          <ul class="insight-list">
+            <li>Radar depth supplies persistent metric grounding, so the diffusion prior refines rather than invents.</li>
+            <li>Pretrained Marigold weights carry indoor structural priors that radar cannot physically resolve.</li>
+            <li>Zero-initialized skip connections let visual guidance contribute in proportion to the evidence actually present in the image.</li>
+            <li>Training across clear, synthetically fogged, and fully occluded RGB removes the need for an explicit mode switch or reliability estimator.</li>
+            <li>DDIM sampling with 8 steps at inference keeps the refinement stage practical.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="stages">
+  <div class="container site-container">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-3">What Each Stage Contributes</h3>
+      </div>
+    </div>
+    <figure class="figure-shell">
+      <div class="flow-grid">
+        <div class="flow-item">
+          <div class="flow-label">(a) Radar depth</div>
+          <img src="./images/flow/radar.png" alt="Coarse radar depth: reliable global structure with soft edges and missing furniture.">
+        </div>
+        <div class="flow-item">
+          <div class="flow-label">(b) + Diffusion refinement</div>
+          <img src="./images/flow/diffusion.png" alt="After diffusion refinement: sharper edges and metric correction, furniture still missing.">
+        </div>
+        <div class="flow-item">
+          <div class="flow-label">(c) RGB input</div>
+          <img src="./images/flow/visual.png" alt="Smoke-degraded RGB input with the residual edge and furniture cues that remain visible.">
+        </div>
+        <div class="flow-item">
+          <div class="flow-label">(d) + Visual guidance (full)</div>
+          <img src="./images/flow/full.png" alt="Full GRADE output: edges enhanced and furniture recovered.">
+        </div>
+        <div class="flow-item">
+          <div class="flow-label">(e) Ground truth</div>
+          <img src="./images/flow/gt.png" alt="Ground-truth depth from the stereo reference camera.">
+        </div>
+      </div>
+    </figure>
+    <div class="content">
+      <p class="figure-caption">
+        One prediction traced through the pipeline. Radar fixes the global geometry, diffusion sharpens boundaries and
+        corrects metric detail, and the visual guidance adapter recovers objects that neither stage could place on its own.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<section class="section section-accent" id="dataset">
+  <div class="container site-container">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-3">Prototype and Dataset</h3>
+      </div>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <figure class="figure-shell">
+          <div class="prototype-grid">
+            <img src="./images/prototype/prototype_label.jpg" alt="Labeled data-collection rig: TI IWR1843BOOST radar with DCA1000EVM, DJI Osmo Action 5 Pro RGB camera, Stereolabs ZED 2i depth camera, smoke machine, and acrylic enclosure.">
+            <img src="./images/prototype/prototype_smoke.jpg" alt="The same rig during data collection with smoke filling the acrylic enclosure.">
+          </div>
+        </figure>
+      </div>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <div class="content has-text-justified">
+          <p>
+            Data is collected with a handheld rig: a 77&thinsp;GHz TI IWR1843BOOST + DCA1000EVM for raw radar I/Q at
+            10&thinsp;Hz, a DJI Osmo Action 5 Pro inside a transparent acrylic enclosure for smoke-degraded RGB, and a
+            Stereolabs ZED 2i outside the enclosure for reference RGB and ground-truth depth. Because the smoke is
+            confined to the enclosure, the reference depth stays independent of smoke density. A MAX30105 IR particle
+            sensor logs smoke density so results can be stratified by visibility.
+          </p>
+          <ul class="insight-list">
+            <li>~95K synchronized radar-camera-depth frames, of which more than 40K are captured in real smoke.</li>
+            <li>12 campus buildings, with a building-disjoint split: every test sequence comes from a building never seen in training.</li>
+            <li>Frames aligned to the 10&thinsp;Hz radar clock within 50&thinsp;ms; unmatched frames are dropped.</li>
+            <li>Fisheye calibration from 800 checkerboard pairs warps the DJI view into the rectified ZED left-camera frame.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="results">
+  <div class="container site-container">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-3">Results</h3>
+      </div>
+    </div>
+
+    <div class="content">
+      <h4 class="title is-4">Clear vs. Smoke</h4>
+      <p>
+        Median metrics on the building-disjoint test set. The smoke rows pool medium and heavy smoke
+        (IR&thinsp;&ge;&thinsp;2000). GRADE is best on every metric in both conditions.
+      </p>
+    </div>
+
+    <div class="table-container">
+      <table class="table is-fullwidth is-striped is-hoverable results-table">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th class="num">MAE (m) &darr;</th>
+            <th class="num">SSIM &uarr;</th>
+            <th class="num">LPIPS &darr;</th>
+            <th class="num">CD (m<sup>2</sup>) &darr;</th>
+            <th class="num">MHD (m) &darr;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="group-row"><td colspan="6">Clear</td></tr>
+          <tr><td>DA3</td><td class="num">0.500</td><td class="num">0.932</td><td class="num">0.159</td><td class="num">0.196</td><td class="num">0.233</td></tr>
+          <tr><td>CaFNet (No-Smoke)</td><td class="num">0.421</td><td class="num">0.944</td><td class="num">0.174</td><td class="num">0.171</td><td class="num">0.211</td></tr>
+          <tr><td>CaFNet</td><td class="num">0.417</td><td class="num">0.945</td><td class="num">0.160</td><td class="num">0.174</td><td class="num">0.210</td></tr>
+          <tr><td>GRT</td><td class="num">0.434</td><td class="num">0.902</td><td class="num">0.440</td><td class="num">0.242</td><td class="num">0.209</td></tr>
+          <tr><td>GRT+Image</td><td class="num">0.415</td><td class="num">0.881</td><td class="num">0.450</td><td class="num">0.153</td><td class="num">0.192</td></tr>
+          <tr><td>RadarCam-Depth</td><td class="num">0.489</td><td class="num">0.938</td><td class="num">0.164</td><td class="num">0.264</td><td class="num">0.262</td></tr>
+          <tr class="highlight-row"><td><strong>GRADE (Ours)</strong></td><td class="num"><strong>0.303</strong></td><td class="num"><strong>0.960</strong></td><td class="num"><strong>0.126</strong></td><td class="num"><strong>0.120</strong></td><td class="num"><strong>0.164</strong></td></tr>
+
+          <tr class="group-row"><td colspan="6">Smoke</td></tr>
+          <tr><td>DA3</td><td class="num">1.255</td><td class="num">0.801</td><td class="num">0.307</td><td class="num">4.407</td><td class="num">1.325</td></tr>
+          <tr><td>CaFNet (No-Smoke)</td><td class="num">0.980</td><td class="num">0.863</td><td class="num">0.287</td><td class="num">1.641</td><td class="num">0.687</td></tr>
+          <tr><td>CaFNet</td><td class="num">0.949</td><td class="num">0.865</td><td class="num">0.282</td><td class="num">1.846</td><td class="num">0.700</td></tr>
+          <tr><td>GRT</td><td class="num">0.436</td><td class="num">0.901</td><td class="num">0.444</td><td class="num">0.208</td><td class="num">0.203</td></tr>
+          <tr><td>GRT+Image</td><td class="num">0.418</td><td class="num">0.884</td><td class="num">0.450</td><td class="num">0.146</td><td class="num">0.192</td></tr>
+          <tr><td>RadarCam-Depth</td><td class="num">0.676</td><td class="num">0.916</td><td class="num">0.211</td><td class="num">0.603</td><td class="num">0.424</td></tr>
+          <tr class="highlight-row"><td><strong>GRADE (Ours)</strong></td><td class="num"><strong>0.313</strong></td><td class="num"><strong>0.959</strong></td><td class="num"><strong>0.137</strong></td><td class="num"><strong>0.114</strong></td><td class="num"><strong>0.167</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="content">
+      <p>
+        The baselines separate along modality. DA3 and both CaFNet variants collapse under smoke, and training CaFNet
+        on smoke does not close the gap, so the failure is architectural rather than a data-coverage issue.
+        RadarCam-Depth degrades more gently because radar supplies its metric scale. GRT is nearly visibility-invariant
+        in MAE but never drops below 0.44 LPIPS. GRADE combines the stability of the radar baselines with lower LPIPS
+        than every baseline in both conditions, and its median MAE changes by only 3.3% from clear to smoke.
+      </p>
+    </div>
+
+    <div class="content">
+      <h4 class="title is-4">Qualitative Comparison</h4>
+      <p>
+        Representative predictions from clear through heavy-smoke scenes, ordered by increasing degradation.
+      </p>
+    </div>
+
+    <figure class="figure-shell">
+      <div class="qual-figure-wrap">
+        <div class="qual-label-row">
+          <div>RGB Reference</div>
+          <div>Input RGB</div>
+          <div>Ground Truth</div>
+          <div class="ours-label">GRADE (Ours)</div>
+          <div>GRT</div>
+          <div>GRT+Image</div>
+          <div>RadarCam-Depth</div>
+          <div>CaFNet</div>
+          <div>DA3</div>
+        </div>
+        <div class="qual-grid">
+          <!-- case 1 -->
+          <img class="qual-panel" src="./images/qual/case1_zed_rgb.jpg" alt="Case 1: RGB reference">
+          <img class="qual-panel" src="./images/qual/case1_dji_rgb.jpg" alt="Case 1: input RGB">
+          <img class="qual-panel" src="./images/qual/case1_gt_depth.png" alt="Case 1: ground truth">
+          <img class="qual-panel qual-ours" src="./images/qual/case1_ours.png" alt="Case 1: GRADE">
+          <img class="qual-panel" src="./images/qual/case1_grt.png" alt="Case 1: GRT">
+          <img class="qual-panel" src="./images/qual/case1_grt_image.png" alt="Case 1: GRT+Image">
+          <img class="qual-panel" src="./images/qual/case1_radarcam.png" alt="Case 1: RadarCam-Depth">
+          <img class="qual-panel" src="./images/qual/case1_cafnet.png" alt="Case 1: CaFNet">
+          <img class="qual-panel" src="./images/qual/case1_da3.png" alt="Case 1: DA3">
+          <!-- case 2 -->
+          <img class="qual-panel" src="./images/qual/case2_zed_rgb.jpg" alt="Case 2: RGB reference">
+          <img class="qual-panel" src="./images/qual/case2_dji_rgb.jpg" alt="Case 2: input RGB">
+          <img class="qual-panel" src="./images/qual/case2_gt_depth.png" alt="Case 2: ground truth">
+          <img class="qual-panel qual-ours" src="./images/qual/case2_ours.png" alt="Case 2: GRADE">
+          <img class="qual-panel" src="./images/qual/case2_grt.png" alt="Case 2: GRT">
+          <img class="qual-panel" src="./images/qual/case2_grt_image.png" alt="Case 2: GRT+Image">
+          <img class="qual-panel" src="./images/qual/case2_radarcam.png" alt="Case 2: RadarCam-Depth">
+          <img class="qual-panel" src="./images/qual/case2_cafnet.png" alt="Case 2: CaFNet">
+          <img class="qual-panel" src="./images/qual/case2_da3.png" alt="Case 2: DA3">
+          <!-- case 3 -->
+          <img class="qual-panel" src="./images/qual/case3_zed_rgb.jpg" alt="Case 3: RGB reference">
+          <img class="qual-panel" src="./images/qual/case3_dji_rgb.jpg" alt="Case 3: input RGB">
+          <img class="qual-panel" src="./images/qual/case3_gt_depth.png" alt="Case 3: ground truth">
+          <img class="qual-panel qual-ours" src="./images/qual/case3_ours.png" alt="Case 3: GRADE">
+          <img class="qual-panel" src="./images/qual/case3_grt.png" alt="Case 3: GRT">
+          <img class="qual-panel" src="./images/qual/case3_grt_image.png" alt="Case 3: GRT+Image">
+          <img class="qual-panel" src="./images/qual/case3_radarcam.png" alt="Case 3: RadarCam-Depth">
+          <img class="qual-panel" src="./images/qual/case3_cafnet.png" alt="Case 3: CaFNet">
+          <img class="qual-panel" src="./images/qual/case3_da3.png" alt="Case 3: DA3">
+          <!-- case 4 -->
+          <img class="qual-panel" src="./images/qual/case4_zed_rgb.jpg" alt="Case 4: RGB reference">
+          <img class="qual-panel" src="./images/qual/case4_dji_rgb.jpg" alt="Case 4: input RGB">
+          <img class="qual-panel" src="./images/qual/case4_gt_depth.png" alt="Case 4: ground truth">
+          <img class="qual-panel qual-ours" src="./images/qual/case4_ours.png" alt="Case 4: GRADE">
+          <img class="qual-panel" src="./images/qual/case4_grt.png" alt="Case 4: GRT">
+          <img class="qual-panel" src="./images/qual/case4_grt_image.png" alt="Case 4: GRT+Image">
+          <img class="qual-panel" src="./images/qual/case4_radarcam.png" alt="Case 4: RadarCam-Depth">
+          <img class="qual-panel" src="./images/qual/case4_cafnet.png" alt="Case 4: CaFNet">
+          <img class="qual-panel" src="./images/qual/case4_da3.png" alt="Case 4: DA3">
+          <!-- case 5 -->
+          <img class="qual-panel" src="./images/qual/case5_zed_rgb.jpg" alt="Case 5: RGB reference">
+          <img class="qual-panel" src="./images/qual/case5_dji_rgb.jpg" alt="Case 5: input RGB">
+          <img class="qual-panel" src="./images/qual/case5_gt_depth.png" alt="Case 5: ground truth">
+          <img class="qual-panel qual-ours" src="./images/qual/case5_ours.png" alt="Case 5: GRADE">
+          <img class="qual-panel" src="./images/qual/case5_grt.png" alt="Case 5: GRT">
+          <img class="qual-panel" src="./images/qual/case5_grt_image.png" alt="Case 5: GRT+Image">
+          <img class="qual-panel" src="./images/qual/case5_radarcam.png" alt="Case 5: RadarCam-Depth">
+          <img class="qual-panel" src="./images/qual/case5_cafnet.png" alt="Case 5: CaFNet">
+          <img class="qual-panel" src="./images/qual/case5_da3.png" alt="Case 5: DA3">
+          <!-- case 6 -->
+          <img class="qual-panel" src="./images/qual/case6_zed_rgb.jpg" alt="Case 6: RGB reference">
+          <img class="qual-panel" src="./images/qual/case6_dji_rgb.jpg" alt="Case 6: input RGB">
+          <img class="qual-panel" src="./images/qual/case6_gt_depth.png" alt="Case 6: ground truth">
+          <img class="qual-panel qual-ours" src="./images/qual/case6_ours.png" alt="Case 6: GRADE">
+          <img class="qual-panel" src="./images/qual/case6_grt.png" alt="Case 6: GRT">
+          <img class="qual-panel" src="./images/qual/case6_grt_image.png" alt="Case 6: GRT+Image">
+          <img class="qual-panel" src="./images/qual/case6_radarcam.png" alt="Case 6: RadarCam-Depth">
+          <img class="qual-panel" src="./images/qual/case6_cafnet.png" alt="Case 6: CaFNet">
+          <img class="qual-panel" src="./images/qual/case6_da3.png" alt="Case 6: DA3">
+          <!-- case 7 -->
+          <img class="qual-panel" src="./images/qual/case7_zed_rgb.jpg" alt="Case 7: RGB reference">
+          <img class="qual-panel" src="./images/qual/case7_dji_rgb.jpg" alt="Case 7: input RGB">
+          <img class="qual-panel" src="./images/qual/case7_gt_depth.png" alt="Case 7: ground truth">
+          <img class="qual-panel qual-ours" src="./images/qual/case7_ours.png" alt="Case 7: GRADE">
+          <img class="qual-panel" src="./images/qual/case7_grt.png" alt="Case 7: GRT">
+          <img class="qual-panel" src="./images/qual/case7_grt_image.png" alt="Case 7: GRT+Image">
+          <img class="qual-panel" src="./images/qual/case7_radarcam.png" alt="Case 7: RadarCam-Depth">
+          <img class="qual-panel" src="./images/qual/case7_cafnet.png" alt="Case 7: CaFNet">
+          <img class="qual-panel" src="./images/qual/case7_da3.png" alt="Case 7: DA3">
+        </div>
+      </div>
+    </figure>
+    <div class="content">
+      <p class="figure-caption">
+        The RGB reference column is shot from outside the smoke enclosure; the input RGB column is what the system
+        actually sees. GRADE preserves the major surfaces, people, stairs, and furniture boundaries visible in the
+        reference depth, while camera-dependent baselines lose the scene entirely in the heavy-smoke rows.
+      </p>
+    </div>
+
+    <div class="content">
+      <h4 class="title is-4">Error Distributions</h4>
+      <p>
+        Empirical CDFs over the whole test set, showing that the median results are not driven by a small subset of frames.
+      </p>
+      <img class="plot-legend" src="./images/cdf/legend.png" alt="Legend for the CDF plots.">
+      <div class="plot-row-label">Clear</div>
+      <div class="plot-grid-4">
+        <img src="./images/cdf/non_smoke_mae.png" alt="CDF of MAE in clear conditions.">
+        <img src="./images/cdf/non_smoke_ssim.png" alt="CDF of SSIM in clear conditions.">
+        <img src="./images/cdf/non_smoke_cd.png" alt="CDF of Chamfer Distance in clear conditions.">
+        <img src="./images/cdf/non_smoke_mhd.png" alt="CDF of Modified Hausdorff Distance in clear conditions.">
+      </div>
+      <div class="plot-row-label">Smoke</div>
+      <div class="plot-grid-4">
+        <img src="./images/cdf/smoke_mae.png" alt="CDF of MAE under smoke.">
+        <img src="./images/cdf/smoke_ssim.png" alt="CDF of SSIM under smoke.">
+        <img src="./images/cdf/smoke_cd.png" alt="CDF of Chamfer Distance under smoke.">
+        <img src="./images/cdf/smoke_mhd.png" alt="CDF of Modified Hausdorff Distance under smoke.">
+      </div>
+      <p class="figure-caption">
+        Under smoke, DA3 and CaFNet develop long high-error tails in MAE, CD, and MHD. GRADE stays shifted toward lower
+        error and higher SSIM across the distribution.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<section class="section section-accent" id="smoke-density">
+  <div class="container site-container">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-3">Stability Across Smoke Density</h3>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table class="table is-fullwidth is-striped is-hoverable results-table">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th class="num">MAE (m) &darr;</th>
+            <th class="num">SSIM &uarr;</th>
+            <th class="num">LPIPS &darr;</th>
+            <th class="num">CD (m<sup>2</sup>) &darr;</th>
+            <th class="num">MHD (m) &darr;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="group-row"><td colspan="6">Light smoke</td></tr>
+          <tr><td>DA3</td><td class="num">0.548</td><td class="num">0.932</td><td class="num">0.165</td><td class="num">0.290</td><td class="num">0.295</td></tr>
+          <tr><td>CaFNet (No-Smoke)</td><td class="num">0.549</td><td class="num">0.929</td><td class="num">0.190</td><td class="num">0.311</td><td class="num">0.293</td></tr>
+          <tr><td>CaFNet</td><td class="num">0.508</td><td class="num">0.935</td><td class="num">0.181</td><td class="num">0.278</td><td class="num">0.277</td></tr>
+          <tr><td>GRT</td><td class="num">0.442</td><td class="num">0.899</td><td class="num">0.449</td><td class="num">0.233</td><td class="num">0.211</td></tr>
+          <tr><td>GRT+Image</td><td class="num">0.415</td><td class="num">0.882</td><td class="num">0.453</td><td class="num">0.152</td><td class="num">0.196</td></tr>
+          <tr><td>RadarCam-Depth</td><td class="num">0.513</td><td class="num">0.937</td><td class="num">0.171</td><td class="num">0.332</td><td class="num">0.303</td></tr>
+          <tr class="highlight-row"><td><strong>GRADE (Ours)</strong></td><td class="num"><strong>0.295</strong></td><td class="num"><strong>0.962</strong></td><td class="num"><strong>0.122</strong></td><td class="num"><strong>0.107</strong></td><td class="num"><strong>0.160</strong></td></tr>
+
+          <tr class="group-row"><td colspan="6">Medium smoke</td></tr>
+          <tr><td>DA3</td><td class="num">0.857</td><td class="num">0.890</td><td class="num">0.256</td><td class="num">1.837</td><td class="num">0.735</td></tr>
+          <tr><td>CaFNet (No-Smoke)</td><td class="num">0.876</td><td class="num">0.882</td><td class="num">0.272</td><td class="num">0.929</td><td class="num">0.529</td></tr>
+          <tr><td>CaFNet</td><td class="num">0.810</td><td class="num">0.891</td><td class="num">0.262</td><td class="num">0.987</td><td class="num">0.532</td></tr>
+          <tr><td>GRT</td><td class="num">0.455</td><td class="num">0.897</td><td class="num">0.448</td><td class="num">0.230</td><td class="num">0.212</td></tr>
+          <tr><td>GRT+Image</td><td class="num">0.424</td><td class="num">0.880</td><td class="num">0.457</td><td class="num">0.151</td><td class="num">0.195</td></tr>
+          <tr><td>RadarCam-Depth</td><td class="num">0.649</td><td class="num">0.919</td><td class="num">0.211</td><td class="num">0.545</td><td class="num">0.402</td></tr>
+          <tr class="highlight-row"><td><strong>GRADE (Ours)</strong></td><td class="num"><strong>0.318</strong></td><td class="num"><strong>0.958</strong></td><td class="num"><strong>0.142</strong></td><td class="num"><strong>0.120</strong></td><td class="num"><strong>0.170</strong></td></tr>
+
+          <tr class="group-row"><td colspan="6">Heavy smoke</td></tr>
+          <tr><td>DA3</td><td class="num">1.751</td><td class="num">0.625</td><td class="num">0.385</td><td class="num">7.796</td><td class="num">1.970</td></tr>
+          <tr><td>CaFNet (No-Smoke)</td><td class="num">1.229</td><td class="num">0.821</td><td class="num">0.313</td><td class="num">3.164</td><td class="num">0.985</td></tr>
+          <tr><td>CaFNet</td><td class="num">1.292</td><td class="num">0.794</td><td class="num">0.322</td><td class="num">3.503</td><td class="num">1.053</td></tr>
+          <tr><td>GRT</td><td class="num">0.404</td><td class="num">0.907</td><td class="num">0.437</td><td class="num">0.173</td><td class="num">0.189</td></tr>
+          <tr><td>GRT+Image</td><td class="num">0.404</td><td class="num">0.889</td><td class="num">0.442</td><td class="num">0.137</td><td class="num">0.187</td></tr>
+          <tr><td>RadarCam-Depth</td><td class="num">0.726</td><td class="num">0.909</td><td class="num">0.210</td><td class="num">0.703</td><td class="num">0.468</td></tr>
+          <tr class="highlight-row"><td><strong>GRADE (Ours)</strong></td><td class="num"><strong>0.304</strong></td><td class="num"><strong>0.962</strong></td><td class="num"><strong>0.129</strong></td><td class="num"><strong>0.104</strong></td><td class="num"><strong>0.161</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="content">
+      <img class="plot-legend" src="./images/smoke/legend.png" alt="Legend for the smoke-density trend plots.">
+      <div class="plot-grid-4">
+        <img src="./images/smoke/mae.png" alt="MAE across light, medium, and heavy smoke.">
+        <img src="./images/smoke/lpips.png" alt="LPIPS across light, medium, and heavy smoke.">
+        <img src="./images/smoke/cd.png" alt="Chamfer Distance across light, medium, and heavy smoke.">
+        <img src="./images/smoke/mhd.png" alt="Modified Hausdorff Distance across light, medium, and heavy smoke.">
+      </div>
+      <p class="figure-caption">
+        GRADE is best on every metric in each stratum and changes little from light to heavy smoke, while the
+        camera-dependent baselines climb steeply.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="ablation">
+  <div class="container site-container">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-3">Ablations</h3>
+      </div>
+    </div>
+
+    <div class="content">
+      <h4 class="title is-4">Contribution of Each Module</h4>
+      <p>Pooled test set across all visibility conditions.</p>
+    </div>
+
+    <div class="table-container">
+      <table class="table is-fullwidth is-striped is-hoverable results-table">
+        <thead>
+          <tr>
+            <th>Variant</th>
+            <th class="num">MAE (m) &darr;</th>
+            <th class="num">SSIM &uarr;</th>
+            <th class="num">LPIPS &darr;</th>
+            <th class="num">CD (m<sup>2</sup>) &darr;</th>
+            <th class="num">MHD (m) &darr;</th>
+            <th class="num">GE &darr;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Ours_radar</td><td class="num">0.320</td><td class="num">0.958</td><td class="num">0.147</td><td class="num">0.132</td><td class="num">0.172</td><td class="num">0.0035</td></tr>
+          <tr><td>Ours_diffusion</td><td class="num">0.360</td><td class="num">0.954</td><td class="num">0.154</td><td class="num">0.167</td><td class="num">0.197</td><td class="num">0.0027</td></tr>
+          <tr class="highlight-row"><td><strong>Ours_full</strong></td><td class="num"><strong>0.308</strong></td><td class="num"><strong>0.959</strong></td><td class="num"><strong>0.133</strong></td><td class="num"><strong>0.116</strong></td><td class="num"><strong>0.166</strong></td><td class="num"><strong>0.0026</strong></td></tr>
+          <tr><td>GRT_Refine (Frozen)</td><td class="num">0.450</td><td class="num">0.939</td><td class="num">0.182</td><td class="num">0.230</td><td class="num">0.243</td><td class="num">0.0034</td></tr>
+          <tr><td>GRT_Refine (Retrain)</td><td class="num">0.433</td><td class="num">0.946</td><td class="num">0.173</td><td class="num">0.248</td><td class="num">0.244</td><td class="num">0.0028</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="content">
+      <p>
+        A pretrained diffusion prior does not improve the radar estimate on its own: Ours_diffusion sharpens boundaries
+        (GE falls from 0.0035 to 0.0027) but worsens MAE, LPIPS, CD, and MHD, because the prior can place plausible
+        structure in the wrong location. Adding visual guidance gives Ours_full, best on all six metrics. Swapping our
+        Stage&nbsp;1 for GRT stays behind on every metric even after the refinement stage is retrained on GRT outputs.
+      </p>
+    </div>
+
+    <div class="content">
+      <h4 class="title is-4">Where Visual Guidance Helps</h4>
+      <img class="single-plot" src="./images/degradation/graceful_degradation.png"
+           alt="Delta MAE between the full GRADE model and the radar-only module as a function of smoke density; negative values favor the full model.">
+      <p class="figure-caption">
+        &Delta;MAE between GRADE and its radar-only module against measured smoke density. Negative values through light
+        and medium smoke show the adapter using the visual cues that remain. As visibility collapses, &Delta;MAE
+        approaches zero rather than growing, so the full model falls back toward the radar-conditioned estimate instead
+        of being dragged down by an uninformative image.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<section class="section section-accent" id="bibtex">
+  <div class="container site-container">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h3 class="title is-3 has-text-centered">BibTeX</h3>
+        <pre class="bibtex-block"><code>@inproceedings{zhao2026grade,
+  title     = {GRADE: Single-Frame Generative Radar Depth Estimation Under Visual Degradation},
+  author    = {Zhao, Bin and Chiou, Patrick and Garg, Nakul},
+  booktitle = {Proceedings of the 32nd Annual International Conference on
+               Mobile Computing and Networking (MobiCom '26)},
+  year      = {2026},
+  doi       = {10.1145/3795866.3844478}
+}</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link external-link" href="https://github.com/phi-lab-rice/GRADE">
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is based on the <a href="https://nerfies.github.io/">Nerfies</a> project-page template,
+            available under the <a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0
+            license</a>. The layout follows our
+            <a href="https://github.com/phi-lab-rice/RadarSFD/tree/main/docs">RadarSFD project page</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

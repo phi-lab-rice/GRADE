@@ -199,6 +199,19 @@ body {
   border-bottom: 1px solid #7b8794;
 }
 
+/* highlight our column in the qualitative grid */
+.qual-panel.qual-ours {
+  outline: 3px solid #002060;
+  outline-offset: -3px;
+  position: relative;
+  z-index: 1;
+}
+
+.qual-label-row .ours-label {
+  color: #002060;
+  font-weight: 700;
+}
+
 .qual-label-row {
   display: grid;
   grid-template-columns: repeat(9, minmax(0, 1fr));

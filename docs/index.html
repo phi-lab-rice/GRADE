@@ -74,34 +74,11 @@
 
           <div class="column has-text-centered">
             <div class="publication-links">
-              <!-- TODO: replace TODO-ARXIV-ID with the real arXiv identifier before publishing. -->
-              <span class="link-block">
-                <a href="https://arxiv.org/abs/TODO-ARXIV-ID"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
-                  <span>Paper</span>
-                </a>
-              </span>
-              <span class="link-block">
-                <a href="https://doi.org/10.1145/3795866.3844478"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="ai ai-acmdl"></i></span>
-                  <span>ACM DL</span>
-                </a>
-              </span>
               <span class="link-block">
                 <a href="https://github.com/phi-lab-rice/GRADE"
                    class="external-link button is-normal is-rounded is-dark">
                   <span class="icon"><i class="fab fa-github"></i></span>
                   <span>Code</span>
-                </a>
-              </span>
-              <!-- TODO: point this at the real Hugging Face repo once the weights are uploaded. -->
-              <span class="link-block">
-                <a href="https://huggingface.co/phi-lab-rice/GRADE"
-                   class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><span aria-hidden="true">&#129303;</span></span>
-                  <span>Weights</span>
                 </a>
               </span>
             </div>
@@ -358,7 +335,7 @@
           <div>RGB Reference</div>
           <div>Input RGB</div>
           <div>Ground Truth</div>
-          <div>GRADE (Ours)</div>
+          <div class="ours-label">GRADE (Ours)</div>
           <div>GRT</div>
           <div>GRT+Image</div>
           <div>RadarCam-Depth</div>
@@ -370,7 +347,7 @@
           <img class="qual-panel" src="./images/qual/case1_zed_rgb.jpg" alt="Case 1: RGB reference">
           <img class="qual-panel" src="./images/qual/case1_dji_rgb.jpg" alt="Case 1: input RGB">
           <img class="qual-panel" src="./images/qual/case1_gt_depth.png" alt="Case 1: ground truth">
-          <img class="qual-panel" src="./images/qual/case1_ours.png" alt="Case 1: GRADE">
+          <img class="qual-panel qual-ours" src="./images/qual/case1_ours.png" alt="Case 1: GRADE">
           <img class="qual-panel" src="./images/qual/case1_grt.png" alt="Case 1: GRT">
           <img class="qual-panel" src="./images/qual/case1_grt_image.png" alt="Case 1: GRT+Image">
           <img class="qual-panel" src="./images/qual/case1_radarcam.png" alt="Case 1: RadarCam-Depth">
@@ -380,7 +357,7 @@
           <img class="qual-panel" src="./images/qual/case2_zed_rgb.jpg" alt="Case 2: RGB reference">
           <img class="qual-panel" src="./images/qual/case2_dji_rgb.jpg" alt="Case 2: input RGB">
           <img class="qual-panel" src="./images/qual/case2_gt_depth.png" alt="Case 2: ground truth">
-          <img class="qual-panel" src="./images/qual/case2_ours.png" alt="Case 2: GRADE">
+          <img class="qual-panel qual-ours" src="./images/qual/case2_ours.png" alt="Case 2: GRADE">
           <img class="qual-panel" src="./images/qual/case2_grt.png" alt="Case 2: GRT">
           <img class="qual-panel" src="./images/qual/case2_grt_image.png" alt="Case 2: GRT+Image">
           <img class="qual-panel" src="./images/qual/case2_radarcam.png" alt="Case 2: RadarCam-Depth">
@@ -390,7 +367,7 @@
           <img class="qual-panel" src="./images/qual/case3_zed_rgb.jpg" alt="Case 3: RGB reference">
           <img class="qual-panel" src="./images/qual/case3_dji_rgb.jpg" alt="Case 3: input RGB">
           <img class="qual-panel" src="./images/qual/case3_gt_depth.png" alt="Case 3: ground truth">
-          <img class="qual-panel" src="./images/qual/case3_ours.png" alt="Case 3: GRADE">
+          <img class="qual-panel qual-ours" src="./images/qual/case3_ours.png" alt="Case 3: GRADE">
           <img class="qual-panel" src="./images/qual/case3_grt.png" alt="Case 3: GRT">
           <img class="qual-panel" src="./images/qual/case3_grt_image.png" alt="Case 3: GRT+Image">
           <img class="qual-panel" src="./images/qual/case3_radarcam.png" alt="Case 3: RadarCam-Depth">
@@ -400,7 +377,7 @@
           <img class="qual-panel" src="./images/qual/case4_zed_rgb.jpg" alt="Case 4: RGB reference">
           <img class="qual-panel" src="./images/qual/case4_dji_rgb.jpg" alt="Case 4: input RGB">
           <img class="qual-panel" src="./images/qual/case4_gt_depth.png" alt="Case 4: ground truth">
-          <img class="qual-panel" src="./images/qual/case4_ours.png" alt="Case 4: GRADE">
+          <img class="qual-panel qual-ours" src="./images/qual/case4_ours.png" alt="Case 4: GRADE">
           <img class="qual-panel" src="./images/qual/case4_grt.png" alt="Case 4: GRT">
           <img class="qual-panel" src="./images/qual/case4_grt_image.png" alt="Case 4: GRT+Image">
           <img class="qual-panel" src="./images/qual/case4_radarcam.png" alt="Case 4: RadarCam-Depth">
@@ -410,7 +387,7 @@
           <img class="qual-panel" src="./images/qual/case5_zed_rgb.jpg" alt="Case 5: RGB reference">
           <img class="qual-panel" src="./images/qual/case5_dji_rgb.jpg" alt="Case 5: input RGB">
           <img class="qual-panel" src="./images/qual/case5_gt_depth.png" alt="Case 5: ground truth">
-          <img class="qual-panel" src="./images/qual/case5_ours.png" alt="Case 5: GRADE">
+          <img class="qual-panel qual-ours" src="./images/qual/case5_ours.png" alt="Case 5: GRADE">
           <img class="qual-panel" src="./images/qual/case5_grt.png" alt="Case 5: GRT">
           <img class="qual-panel" src="./images/qual/case5_grt_image.png" alt="Case 5: GRT+Image">
           <img class="qual-panel" src="./images/qual/case5_radarcam.png" alt="Case 5: RadarCam-Depth">
@@ -420,7 +397,7 @@
           <img class="qual-panel" src="./images/qual/case6_zed_rgb.jpg" alt="Case 6: RGB reference">
           <img class="qual-panel" src="./images/qual/case6_dji_rgb.jpg" alt="Case 6: input RGB">
           <img class="qual-panel" src="./images/qual/case6_gt_depth.png" alt="Case 6: ground truth">
-          <img class="qual-panel" src="./images/qual/case6_ours.png" alt="Case 6: GRADE">
+          <img class="qual-panel qual-ours" src="./images/qual/case6_ours.png" alt="Case 6: GRADE">
           <img class="qual-panel" src="./images/qual/case6_grt.png" alt="Case 6: GRT">
           <img class="qual-panel" src="./images/qual/case6_grt_image.png" alt="Case 6: GRT+Image">
           <img class="qual-panel" src="./images/qual/case6_radarcam.png" alt="Case 6: RadarCam-Depth">
@@ -430,7 +407,7 @@
           <img class="qual-panel" src="./images/qual/case7_zed_rgb.jpg" alt="Case 7: RGB reference">
           <img class="qual-panel" src="./images/qual/case7_dji_rgb.jpg" alt="Case 7: input RGB">
           <img class="qual-panel" src="./images/qual/case7_gt_depth.png" alt="Case 7: ground truth">
-          <img class="qual-panel" src="./images/qual/case7_ours.png" alt="Case 7: GRADE">
+          <img class="qual-panel qual-ours" src="./images/qual/case7_ours.png" alt="Case 7: GRADE">
           <img class="qual-panel" src="./images/qual/case7_grt.png" alt="Case 7: GRT">
           <img class="qual-panel" src="./images/qual/case7_grt_image.png" alt="Case 7: GRT+Image">
           <img class="qual-panel" src="./images/qual/case7_radarcam.png" alt="Case 7: RadarCam-Depth">
@@ -626,9 +603,6 @@
 <footer class="footer">
   <div class="container">
     <div class="content has-text-centered">
-      <a class="icon-link" href="https://doi.org/10.1145/3795866.3844478">
-        <i class="fas fa-file-pdf"></i>
-      </a>
       <a class="icon-link external-link" href="https://github.com/phi-lab-rice/GRADE">
         <i class="fab fa-github"></i>
       </a>

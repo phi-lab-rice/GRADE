@@ -1,5 +1,5 @@
 # Minimal inference, metric, and quantitative-reproduction environment.
-# Python 3.10 or 3.11 is recommended. Install the CUDA-matched PyTorch wheel
+# Python 3.11 is required. Install the CUDA-matched PyTorch wheel
 # for the host before (or together with) this file; see README.md.
 
 # Core CUDA / model runtime (stable counterparts of the server environment).

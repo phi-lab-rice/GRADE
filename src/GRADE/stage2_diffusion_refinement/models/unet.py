@@ -6,7 +6,7 @@ from diffusers import UNet2DConditionModel
 
 
 class SDUnet:
-    MODEL_PATH = Path(__file__).resolve().parents[4] / "checkpoints" / "third_party" / "marigold_unet"
+    MODEL_PATH = Path(__file__).resolve().parents[4] / "checkpoints" / "misc" / "marigold_unet"
     def __init__(
         self,
         use_pretrained=False,

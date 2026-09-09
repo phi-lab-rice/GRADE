@@ -5,7 +5,7 @@ from diffusers import AutoencoderTiny
 
 
 class VAE:
-    MODEL_PATH = Path(__file__).resolve().parents[4] / "checkpoints" / "third_party" / "taesd"
+    MODEL_PATH = Path(__file__).resolve().parents[4] / "checkpoints" / "misc" / "taesd"
     def __init__(self, device, torch_dtype):
         self.device = device
         self.torch_dtype = torch_dtype

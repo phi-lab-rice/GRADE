@@ -81,6 +81,13 @@
                   <span>Code</span>
                 </a>
               </span>
+              <span class="link-block">
+                <a href="https://rice.box.com/s/8rfrycts3cxzpc3g0h68d33hg6u98t2p"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-database"></i></span>
+                  <span>Dataset</span>
+                </a>
+              </span>
             </div>
           </div>
         </div>
@@ -248,6 +255,30 @@
             Stereolabs ZED 2i outside the enclosure for reference RGB and ground-truth depth. Because the smoke is
             confined to the enclosure, the reference depth stays independent of smoke density. A MAX30105 IR particle
             sensor logs smoke density so results can be stratified by visibility.
+          </p>
+          <p>
+            <strong>Dataset access:</strong> the synchronized dataset is available through
+            <a href="https://rice.box.com/s/8rfrycts3cxzpc3g0h68d33hg6u98t2p">this Box share</a>.
+            The dataset-processing scripts are available in the GitHub
+            <a href="https://github.com/phi-lab-rice/GRADE/tree/main/processing_code"><code>processing_code/</code></a>
+            directory or under <code>processing_code/</code> in the Box share.
+            The evaluation code is included directly in this repository under
+            <code>evaluation/</code> and <code>src/</code>.
+          </p>
+          <p>
+            <strong>Processing:</strong> after downloading and extracting the dataset, enter the
+            <code>processing_code/</code> directory and run
+            <code>python processor.py --dataset /path/to/raw_dataset</code> for the full radar + ZED + DJI pipeline.
+            Use <code>processor_rgb.py</code> for RGB/depth-only processing or <code>processor_pcd.py</code> for radar
+            point-cloud extraction. Processed outputs are written to
+            <code>processed/&lt;sequence_name&gt;/</code>; each processor also supports <code>--sequences</code> for
+            selected sequences.
+          </p>
+          <p>
+            <strong>Evaluation environment:</strong> install Python 3.11 and the pinned dependencies from
+            <a href="https://github.com/phi-lab-rice/GRADE/blob/main/environment.txt"><code>environment.txt</code></a>
+            before running the evaluation scripts. Full evaluation also requires the checkpoints and required dataset
+            directories from the Box release.
           </p>
           <ul class="insight-list">
             <li>~95K synchronized radar-camera-depth frames, of which more than 40K are captured in real smoke.</li>

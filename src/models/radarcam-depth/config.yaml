@@ -1,0 +1,25 @@
+data:
+  # RadarCam-Depth consumes the separately prepared ZJU-style evaluation set.
+  smoke_eval_root: ../../../evaluation_dataset/Smoke-Eval-RadarCam-Depth
+depth:
+  # Preserve the bounds used to train the released RadarCam-Depth weights.
+  # They also define which RC-Net depths become SML scale anchors.
+  max_radar_depth_m: 11.2
+  min_radar_depth_m: 0.05
+  min_pred_depth_m: 0.1
+  max_pred_depth_m: 11.2
+  min_eval_depth_m: 0.0
+  max_eval_depth_m: 11.2
+rcnet:
+  input_height: 288
+  input_width: 512
+  patch_size: [288, 96]
+  response_thr: 0.5
+sml:
+  mono_tag: dpt_hybrid
+  batch_size: 8
+  num_workers: 0
+runtime:
+  seed: 42
+  cpu: false
+  mixed_precision: bf16

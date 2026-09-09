@@ -1,0 +1,9 @@
+# Runtime metadata for the DA3 direct backend. The runner passes the data,
+# output, and checkpoint paths explicitly because the upstream-style CLI
+# requires them.
+data:
+  smoke_eval_root: ../../../evaluation_dataset/Smoke-Eval
+runtime:
+  seed: 42
+  mixed_precision: fp16
+  model_name: da3metric-large

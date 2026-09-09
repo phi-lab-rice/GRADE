@@ -1,0 +1,29 @@
+# CaFNet-no-smoke inference config for the packaged Smoke-Eval data.
+test_base_dir: "../../../evaluation_dataset/Smoke-Eval"
+test_split: "train"
+test_split_json: null
+
+# Input and radar preprocessing
+input_height: 288
+input_width: 512
+radar_max_depth_m: 11.2
+max_dist_correspondence: 0.5
+patch_size: [64, 128]
+
+# Model architecture
+encoder: resnet34_bts
+encoder_radar: resnet18
+radar_input_channels: 1
+bts_size: 512
+max_depth: 11.2
+
+# Runtime
+batch_size: 32
+num_workers: 0
+seed: 42
+cpu: false
+mixed_precision: "fp16"
+
+# Checkpoint and output root
+checkpoint_path: "../../../checkpoints/baselines/cafnet_no_smoke/cafnet_no_smoke.safetensors"
+prediction_dir: "prediction"

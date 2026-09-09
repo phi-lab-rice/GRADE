@@ -1,0 +1,34 @@
+{
+    "test-rice": [
+        "Dell-1",
+        "Dell-2",
+        "Smoke-Dell-1",
+        "Smoke-Dell-2",
+        "Keck-1",
+        "Keck-2",
+        "Keck-3",
+        "Smoke-keck-1",
+        "Smoke-keck-2",
+        "Smoke-keck-3"
+    ],
+    "test-iq1m": [
+        "cfa.cfa.1.fwd",
+        "cfa.cfa.1.lat",
+        "cfa.cfa.3.fwd",
+        "cfa.cfa.3.lat",
+        "cfa.cfa.a.fwd",
+        "cfa.cfa.a.lat",
+        "morrison.morrison.1.fwd",
+        "morrison.morrison.1.lat",
+        "morrison.morrison.2.fwd",
+        "morrison.morrison.2.lat",
+        "posner.posner.1.fwd",
+        "posner.posner.1.lat",
+        "posner.posner.2.fwd",
+        "posner.posner.2.lat",
+        "posner.posner.3.fwd",
+        "posner.posner.3.lat",
+        "posner.posner.a.fwd",
+        "posner.posner.a.lat"
+    ]
+}

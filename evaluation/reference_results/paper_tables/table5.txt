@@ -1,0 +1,14 @@
+
+Table 5: gradient loss ablation (pooled clear + smoke medians)
+=======================================================================
+
+Overall
+-----------------------------------------------------------------------
+Variant          MAE      SSIM     LPIPS        CD       MHD        DGE
+W/O L_grad  0.385[2]  0.952[2]  0.166[2]  0.203[2]  0.212[2]  0.0036[2]
+W/ L_grad   0.320[1]  0.958[1]  0.147[1]  0.132[1]  0.172[1]  0.0035[1]
+
+[1] best; [2] second-best (ties share rank at displayed precision)
+
+Overall: gradient supervision reduces median DGE from 0.0036 to 0.0035 (3.2% reduction).
+

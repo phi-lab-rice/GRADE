@@ -3,7 +3,7 @@
 Every checkpoint in this artifact is a Hugging Face safetensors file containing
 only model tensors. Training state (optimizer, scheduler, epoch, losses, and
 metrics) is not retained. All model entry points use Hugging Face Accelerate
-with FP16 inference.
+with FP16 inference in our evaluation
 
 Run any model from the artifact root as follows:
 
@@ -41,5 +41,3 @@ and launches two Accelerate workers. Model-specific arguments can follow the
 | GRT w/o Doppler | `checkpoints/ablations/grt_no_doppler/grt_no_doppler.safetensors` | `src/models/grt_no_doppler/` |
 | Ours_radar w/o Grad | `checkpoints/ablations/ours_radar_no_grad/ours_radar_no_grad.safetensors` | `src/models/ours_radar_no_grad/` |
 | Ours_full w/o 3D | `checkpoints/ablations/ours_full_no_3d/{radar,diffusion,control}.safetensors` | `src/models/ours_full_no_3d/` |
-
-GRT-CaFNet is intentionally excluded: it is not a paper model in this release.

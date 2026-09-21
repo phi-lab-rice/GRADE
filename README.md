@@ -30,7 +30,7 @@ computation, saved-result reproduction, and the evaluation configuration.
 ### Dataset
 
 The synchronized dataset is shared through
-[Box](https://rice.box.com/s/8rfrycts3cxzpc3g0h68d33hg6u98t2p). Please follow the
+[Box](https://rice.box.com/s/4jmqiis2zufh0osflyc6gd502obn3a66). Please follow the
 access and usage terms provided with that share link. The dataset-processing
 scripts are available directly in [`processing_code/`](processing_code/) in this
 GitHub repository and under `processing_code/` in the Box share.

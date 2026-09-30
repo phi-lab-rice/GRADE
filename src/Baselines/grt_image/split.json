@@ -1,0 +1,16 @@
+{
+    "test": [
+        "Dell-1",
+        "Dell-2",
+        "Smoke-Dell-1",
+        "Smoke-Dell-2",
+        "brk-2",
+        "brk-3",
+        "Brk-b",
+        "brk-basement",
+        "Brk-stair",
+        "Smoke-brk-2",
+        "Smoke-brk-3",
+        "Smoke-brk-b"
+    ]
+}

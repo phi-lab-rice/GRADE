@@ -1,0 +1,14 @@
+training: {batch_size: 1, mixed_precision: fp16, seed: 42}
+data:
+  smoke_eval_root: ../../../evaluation_dataset/Smoke-Eval
+  resolution: {height: 288, width: 512}
+  scale_factor: 0.001
+  max_depth_m: 11.2
+  num_frames: 1
+  num_workers: 0
+pretrained:
+  radar_model: ../../../checkpoints/ablations/ours_full_no_3d/radar.safetensors
+  unet: ../../../checkpoints/ablations/ours_full_no_3d/diffusion.safetensors
+  controlnet: ../../../checkpoints/ablations/ours_full_no_3d/control.safetensors
+diffusion: {num_train_timesteps: 1000}
+inference: {frame_skip: 1, batch_size: 1, num_workers: 0}

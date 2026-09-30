@@ -1,0 +1,20 @@
+training: {batch_size: 1, mixed_precision: fp16, seed: 42}
+data:
+  smoke_eval_root: ../../../evaluation_dataset/Smoke-Eval
+  resolution: {height: 288, width: 512}
+  scale_factor: 0.001
+  max_depth_m: 11.2
+  num_frames: 1
+  num_workers: 0
+  test_skip: 1
+  camera_intrinsics: {fx: 208.632642, fy: 208.632642, cx: 254.533594, cy: 149.243860}
+pretrained:
+  grt_model: ../../../checkpoints/baselines/grt/grt.safetensors
+diffusion: {num_train_timesteps: 1000}
+inference:
+  unet_checkpoint: ../../../checkpoints/grade/diffusion.safetensors
+  controlnet_checkpoint: ../../../checkpoints/grade/control.safetensors
+  output_dir: ../../../inference_results/grt_refine_freeze
+  frame_skip: 1
+  batch_size: 1
+  num_workers: 0

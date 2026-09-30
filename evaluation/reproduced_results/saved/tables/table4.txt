@@ -1,0 +1,13 @@
+
+Table 4: module ablation (pooled clear + smoke medians)
+========================================================================================
+
+Overall
+----------------------------------------------------------------------------------------
+Variant                                 MAE     SSIM    LPIPS       CD      MHD      DGE
+Ours: radar stage                     0.320    0.958    0.147    0.132    0.172   0.0035
+Ours: diffusion stage                 0.360    0.954    0.154    0.167    0.197   0.0027
+GRADE (full)                          0.308    0.959    0.133    0.116    0.166   0.0026
+GRT Stage 1 + frozen refinement       0.450    0.939    0.182    0.230    0.243   0.0034
+GRT Stage 1 + retrained refinement    0.433    0.946    0.173    0.248    0.244   0.0028
+

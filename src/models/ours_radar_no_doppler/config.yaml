@@ -1,0 +1,13 @@
+training: {batch_size: 1, mixed_precision: fp16, seed: 42}
+data:
+  test_root: ../../../evaluation_dataset/Smoke-Eval
+  scale_factor: 0.001
+  max_depth_m: 11.2
+  depth_resolution: [128, 256]
+  num_workers: 0
+inference:
+  checkpoint_path: ../../../checkpoints/ablations/ours_radar_no_doppler/ours_radar_no_doppler.safetensors
+  output_dir: ../../../inference_results/ours_radar_no_doppler
+  batch_size: 1
+  num_workers: 0
+  frame_skip: 1

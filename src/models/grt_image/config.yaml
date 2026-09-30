@@ -1,0 +1,11 @@
+paths:
+  smoke_eval_root: ../../../evaluation_dataset/Smoke-Eval
+training:
+  batch_size: 1
+  mixed_precision: fp16
+  seed: 42
+data:
+  image_height: 288
+  image_width: 512
+model:
+  resnet18_pretrained: false

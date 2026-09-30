@@ -1,0 +1,12 @@
+
+Table 6: 3D reconstruction loss ablation (pooled clear + smoke medians)
+==========================================================
+
+Overall
+----------------------------------------------------------
+Variant        MAE      SSIM     LPIPS        CD       MHD
+W/O L_3D  0.376[2]  0.952[2]  0.156[2]  0.169[2]  0.204[2]
+W/ L_3D   0.308[1]  0.959[1]  0.133[1]  0.116[1]  0.166[1]
+
+[1] best; [2] second-best (ties share rank at displayed precision)
+

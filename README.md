@@ -60,7 +60,7 @@ Tables are written to `evaluation/reproduced_results/saved/tables/`. Omit `--tab
 
 ## Citation
 
-If you use GRADE, please cite:
+If you find GRADE helpful in your research, please cite:
 
 ```bibtex
 @inproceedings{zhao2026grade,

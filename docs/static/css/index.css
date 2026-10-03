@@ -58,6 +58,21 @@ body {
   font-weight: bold;
 }
 
+.publication-badges {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.publication-badges img {
+  display: block;
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
 .publication-authors a {
   color: hsl(204, 86%, 53%) !important;
 }

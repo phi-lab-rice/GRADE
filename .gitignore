@@ -19,3 +19,7 @@
 /evaluation/reference_results/**
 /evaluation/outputs/**
 /evaluation/metric_results/**
+
+# Keep only the compressed silent teaser in Git; preserve other local videos.
+/docs/static/videos/*
+!/docs/static/videos/grade-mobicom26-teaser-silent-small.mp4

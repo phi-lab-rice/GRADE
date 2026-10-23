@@ -109,7 +109,8 @@ body {
   padding-bottom: 1.5rem;
 }
 
-.teaser-image {
+.teaser-image,
+.teaser-video {
   display: block;
   width: 100%;
   height: auto;

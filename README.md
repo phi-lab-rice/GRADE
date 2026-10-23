@@ -6,6 +6,10 @@ Official implementation of **GRADE: Single-Frame Generative Radar Depth Estimati
 
 GRADE estimates metric depth from a single radar frame. A radar depth module provides range information, and a generative refinement module recovers scene structure while using camera cues when they are available.
 
+## Video
+
+[Watch the GRADE MobiCom 2026 teaser (90 seconds)](docs/static/videos/grade-mobicom26-teaser-silent-small.mp4).
+
 ## Installation
 
 Use Python 3.11. CUDA is recommended for inference and metric computation. Install a PyTorch build compatible with your hardware, then install the dependencies in [environment.txt](environment.txt), which pins the PyTorch and TorchVision versions used for the published results.

@@ -8,7 +8,7 @@ GRADE estimates metric depth from a single radar frame. A radar depth module pro
 
 ## Video
 
-[Watch the GRADE MobiCom 2026 teaser (90 seconds)](docs/static/videos/grade-mobicom26-teaser-silent-small.mp4).
+https://github.com/user-attachments/assets/0cb6081b-44ba-4dc1-b5a2-6d671bb48f8d
 
 ## Installation
 
